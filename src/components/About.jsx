@@ -1,24 +1,24 @@
 import { cn } from "../lib/utils";
-import { Code, LayoutList, Trophy } from "lucide-react";
+import { Code, Sparkles, Brain } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-const CV_FILE_PATH = "public/Pranali pathak Resume.pdf";
+const CV_FILE_PATH = "public\\Pranali Pathak resume 12-08.pdf";
 
 const skillsContent = [
   {
     icon: Code,
-    title: "Web Development",
-    desc: "Creating responsive websites and web applications with modern frameworks.",
+    title: "Full-Stack Development",
+    desc: "React.js, Next.js, Node.js, Express.js, FastAPI — building responsive, end-to-end web applications like HopOn and CasaHue.",
   },
   {
-    icon: LayoutList,
-    title: "UI/UX Design",
-    desc: "Designing intuitive user interfaces and seamless user experiences.",
+    icon: Brain,
+    title: "AI/ML Engineering",
+    desc: "spaCy, OpenCV, TF-IDF, Tesseract — from NER-based resume scoring in CogniHire to OCR pipelines and recommendation systems.",
   },
   {
-    icon: Trophy,
-    title: "Project Management",
-    desc: "Leading projects from conception to completion with agile methodologies.",
+    icon: Sparkles,
+    title: "UI/UX & Design Leadership",
+    desc: "Led design for LITSOC and Colosseum Technical Fest, crafting interfaces and branding that are clean, intuitive, and beautiful.",
   },
 ];
 
@@ -132,7 +132,7 @@ export const About = () => {
                     "linear-gradient(to right, #D8B4FE, #9333EA)",
                 }}
               >
-                Passionate Web Developer & Tech Creator
+                Detail-Oriented Full-Stack Developer & AI/ML Enthusiast
               </h3>
 
               {/* Animated divider */}
@@ -145,18 +145,23 @@ export const About = () => {
                 ref={p1Ref}
                 className="reveal reveal-delay-1 text-foreground/70 leading-relaxed"
               >
-                With over 5 years of experience in web development, I specialize
-                in creating responsive, accessible, and performant web
-                applications using modern technologies.
+                I'm Pranali — a Computer Engineering student who loves turning
+                ideas into products people actually want to use. I enjoy
+                building full-stack and AI/ML-powered projects, but for me,
+                building a good product goes beyond making it functional. I care
+                about how it looks, how it feels, and whether it makes someone
+                want to come back and use it.
               </p>
               <p
                 ref={p2Ref}
                 className="reveal reveal-delay-2 text-foreground/70 leading-relaxed"
               >
-                I'm passionate about creating elegant solutions to complex
-                problems, and I'm constantly learning new technologies and
-                techniques to stay at the forefront of the ever-evolving web
-                landscape.
+                I'm naturally curious and always looking to learn something new,
+                .I like experimenting with ideas and try to think outside the
+                box . Python is my strongest language, and my work with AI/ML
+                has given me the opportunity to take machine learning from
+                theory to real-world applications. Alongside building projects,
+                I sharpen my problem-solving skills through DSA.
               </p>
 
               {/* CTA Buttons */}
@@ -201,10 +206,14 @@ export const About = () => {
                   ref={cardRefs[index]}
                   className={cn(
                     `reveal reveal-right reveal-delay-${index + 2}`,
-                    "rounded-xl p-6 border transition-all duration-300 cursor-pointer group",
-                    "bg-card/50 backdrop-blur-md border-transparent hover:border-primary/50",
+                    "rounded-xl p-6 border cursor-pointer group",
+                    "bg-card/50 backdrop-blur-md border-transparent",
                     "shadow-md shadow-black/20",
-                    "hover:scale-[1.03] hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20",
+                    "transition-[transform,box-shadow,border-color] duration-300 ease-out",
+                    "hover:scale-[1.02]",
+                    "hover:border-primary/50",
+                    "hover:shadow-lg hover:shadow-primary/20",
+                    "will-change-transform",
                   )}
                 >
                   <div className="flex items-center space-x-4 mb-2">
