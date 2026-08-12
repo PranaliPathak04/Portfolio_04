@@ -1,5 +1,3 @@
-
-
 import { cn } from "../lib/utils";
 import prapa from "../assets/pinky prapa.jpeg";
 import { useEffect, useRef } from "react";
@@ -25,7 +23,7 @@ function useScrollReveal(options = {}) {
       {
         threshold: options.threshold ?? 0.15,
         rootMargin: options.rootMargin ?? "0px 0px -60px 0px",
-      }
+      },
     );
 
     observer.observe(el);
@@ -116,21 +114,17 @@ export const Hero = () => {
         className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 sm:py-24"
       >
         <div className="container relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center text-left">
-
           {/* ➡️ COLUMN 1: Profile Image */}
           <div
             ref={imageRef}
             className="reveal reveal-left flex justify-center md:justify-start items-center mt-12 md:mt-0 order-first md:order-none"
           >
             <div className="float-anim relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
-
               {/* Outer Glow Ring */}
               <div className="absolute inset-0 rounded-full border-4 border-primary/50 opacity-50 animate-pulse-subtle"></div>
 
               {/* Inner Image Container */}
-              <div
-                className="glow-pulse relative w-full h-full rounded-full overflow-hidden transition-transform duration-300 hover:scale-[1.03]"
-              >
+              <div className="glow-pulse relative w-full h-full rounded-full overflow-hidden transition-transform duration-300 hover:scale-[1.03]">
                 <img
                   src={prapa}
                   alt="Pranali Pathak Profile"
@@ -142,7 +136,6 @@ export const Hero = () => {
 
           {/* ➡️ COLUMN 2: Text Content */}
           <div className="space-y-6 text-center md:text-right order-last md:order-none">
-
             {/* Subheading */}
             <p
               ref={badgeRef}
@@ -158,13 +151,13 @@ export const Hero = () => {
             >
               <span className="text-glow">
                 <Typewriter
-                words={["Pranali Pathak"]}
-                loop={true}
-                cursor
-                cursorStyle="|"
-                typeSpeed={120}
-                deleteSpeed={50}
-                delaySpeed={2000}
+                  words={["Pranali Pathak"]}
+                  loop={true}
+                  cursor
+                  cursorStyle="|"
+                  typeSpeed={120}
+                  deleteSpeed={50}
+                  delaySpeed={2000}
                 />
               </span>
             </h1>
@@ -198,8 +191,8 @@ export const Hero = () => {
                 href="#contact"
                 className={cn(
                   "px-8 py-2 rounded-full font-medium border-2",
-                  "border-primary text-primary hover:bg-primary/10 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)]",
-                  "transition-all duration-300 hover:scale-105 active:scale-95"
+                  "border-primary text-primary hover:bg-primary/10 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)]",
+                  "transition-all duration-300 hover:scale-105 active:scale-95",
                 )}
               >
                 Contact Me

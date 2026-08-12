@@ -1,17 +1,29 @@
-
-
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useEffect, useRef } from "react";
 
 const contactInfo = [
-  { icon: Mail, label: "Email", value: "pranalipathak04@gmail.com", link: "mailto:pranalipathak04@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+91 75061 36405", link: "tel:+917506136405" },
+  {
+    icon: Mail,
+    label: "Email",
+    value: "pranalipathak04@gmail.com",
+    link: "mailto:pranalipathak04@gmail.com",
+  },
+  {
+    icon: Phone,
+    label: "Phone",
+    value: "+91 75061 36405",
+    link: "tel:+917506136405",
+  },
   { icon: MapPin, label: "Location", value: "Mumbai, India", link: "#" },
 ];
 
 const socialLinks = [
-  { icon: Linkedin, label: "LinkedIn", link: "https://www.linkedin.com/in/pranali-pathak-83906634b" },
+  {
+    icon: Linkedin,
+    label: "LinkedIn",
+    link: "https://www.linkedin.com/in/pranali-pathak-83906634b",
+  },
   { icon: Github, label: "GitHub", link: "https://github.com/PranaliPathak04" },
 ];
 
@@ -27,7 +39,7 @@ function useScrollReveal(threshold = 0.15) {
           observer.unobserve(el);
         }
       },
-      { threshold, rootMargin: "0px 0px -60px 0px" }
+      { threshold, rootMargin: "0px 0px -60px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -41,7 +53,11 @@ export const Contact = () => {
 
   // Left column refs
   const leftTitleRef = useScrollReveal();
-  const contactCardRefs = [useScrollReveal(), useScrollReveal(), useScrollReveal()];
+  const contactCardRefs = [
+    useScrollReveal(),
+    useScrollReveal(),
+    useScrollReveal(),
+  ];
   const socialsTitleRef = useScrollReveal();
   const socialsRef = useScrollReveal();
 
@@ -84,40 +100,47 @@ export const Contact = () => {
           width: 100%;
           padding: 0.75rem;
           border-radius: 0.5rem;
-          background: rgba(var(--background), 0.5);
+          background: hsl(var(--background) / 0.5);
           color: white;
-          border: 1px solid rgba(147, 51, 234, 0.2);
+          border: 1px solid hsl(var(--primary) / 0.2);
           transition: border-color 0.3s, box-shadow 0.3s;
           placeholder-color: rgba(255,255,255,0.4);
         }
         .contact-input::placeholder { color: rgba(255,255,255,0.35); }
         .contact-input:focus {
           outline: none;
-          border-color: rgb(147, 51, 234);
-          box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+          border-color: hsl(var(--primary));
+          box-shadow: 0 0 15px hsl(var(--primary) / 0.3);
         }
       `}</style>
 
       <section id="contact" className="relative py-24 sm:py-32 overflow-hidden">
         <div className="container relative z-10 text-center">
-
           {/* Heading */}
           <div className="mb-16">
-            <h2 ref={headingRef} className="reveal text-3xl sm:text-4xl font-bold">
+            <h2
+              ref={headingRef}
+              className="reveal text-3xl sm:text-4xl font-bold"
+            >
               Get In <span className="text-primary">Touch</span>
             </h2>
-            <p ref={subRef} className="reveal reveal-delay-1 mt-4 text-foreground/70 max-w-2xl mx-auto">
-              Thank you for visiting my portfolio! If you're interested in collaborating on a
-              project or have any inquiries, please feel free to get in touch.
+            <p
+              ref={subRef}
+              className="reveal reveal-delay-1 mt-4 text-foreground/70 max-w-2xl mx-auto"
+            >
+              Thank you for visiting my portfolio! If you're interested in
+              collaborating on a project or have any inquiries, please feel free
+              to get in touch.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-start text-left">
-
             {/* LEFT COLUMN */}
             <div className="lg:col-span-1 space-y-8 order-last lg:order-first">
-
-              <h3 ref={leftTitleRef} className="reveal-left text-2xl font-semibold text-white mb-6">
+              <h3
+                ref={leftTitleRef}
+                className="reveal-left text-2xl font-semibold text-white mb-6"
+              >
                 Contact Details
               </h3>
 
@@ -131,12 +154,14 @@ export const Contact = () => {
                   >
                     <item.icon className="h-6 w-6 text-primary flex-shrink-0 mt-1 group-hover:text-cyan-400 transition-colors duration-300" />
                     <div>
-                      <p className="text-sm font-medium text-foreground/70">{item.label}</p>
+                      <p className="text-sm font-medium text-foreground/70">
+                        {item.label}
+                      </p>
                       <a
                         href={item.link}
                         className={cn(
                           "text-lg font-semibold text-white",
-                          item.link !== "#" && "hover:underline"
+                          item.link !== "#" && "hover:underline",
                         )}
                       >
                         {item.value}
@@ -148,10 +173,16 @@ export const Contact = () => {
 
               {/* Socials */}
               <div className="pt-8 border-t border-primary/10">
-                <h3 ref={socialsTitleRef} className="reveal reveal-delay-1 text-xl font-semibold mb-4 text-white">
+                <h3
+                  ref={socialsTitleRef}
+                  className="reveal reveal-delay-1 text-xl font-semibold mb-4 text-white"
+                >
                   Connect on Socials
                 </h3>
-                <div ref={socialsRef} className="reveal reveal-delay-2 flex gap-4">
+                <div
+                  ref={socialsRef}
+                  className="reveal reveal-delay-2 flex gap-4"
+                >
                   {socialLinks.map((item, index) => (
                     <a
                       key={index}
@@ -169,22 +200,42 @@ export const Contact = () => {
             </div>
 
             {/* RIGHT COLUMN — Form slides in from right */}
-            <div ref={formRef} className="reveal-right lg:col-span-2 order-first lg:order-last">
+            <div
+              ref={formRef}
+              className="reveal-right lg:col-span-2 order-first lg:order-last"
+            >
               <form
                 action="#"
                 method="POST"
-                className="space-y-6 p-8 rounded-xl bg-card/50 backdrop-blur-sm border border-primary/20 shadow-xl shadow-purple-900/10 h-full"
+                className="space-y-6 p-8 rounded-xl bg-card/50 backdrop-blur-sm border border-primary/20 shadow-xl shadow-black/20 h-full"
               >
                 <h3 className="text-2xl font-semibold mb-4 text-white">
                   Send a Message
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <input type="text" name="name" placeholder="Your Name" required className="contact-input" />
-                  <input type="email" name="email" placeholder="Your Email" required className="contact-input" />
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Your Name"
+                    required
+                    className="contact-input"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                    required
+                    className="contact-input"
+                  />
                 </div>
 
-                <input type="text" name="subject" placeholder="Subject (Optional)" className="contact-input" />
+                <input
+                  type="text"
+                  name="subject"
+                  placeholder="Subject (Optional)"
+                  className="contact-input"
+                />
 
                 <textarea
                   name="message"
@@ -201,7 +252,6 @@ export const Contact = () => {
                 </div>
               </form>
             </div>
-
           </div>
         </div>
       </section>

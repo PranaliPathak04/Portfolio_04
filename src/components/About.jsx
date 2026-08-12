@@ -1,5 +1,3 @@
-
-
 import { cn } from "../lib/utils";
 import { Code, LayoutList, Trophy } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -43,7 +41,7 @@ function useScrollReveal(options = {}) {
       {
         threshold: options.threshold ?? 0.15,
         rootMargin: options.rootMargin ?? "0px 0px -60px 0px",
-      }
+      },
     );
 
     observer.observe(el);
@@ -116,7 +114,6 @@ export const About = () => {
 
       <section id="about" className="relative py-24 sm:py-32 overflow-hidden">
         <div className="container relative z-10">
-
           {/* Section Heading */}
           <div ref={headingRef} className="reveal text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold">
@@ -125,13 +122,15 @@ export const About = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
-
             {/* LEFT COLUMN */}
             <div className="space-y-6">
               <h3
                 ref={leftColRef}
                 className="reveal reveal-left text-3xl font-bold bg-clip-text text-transparent"
-                style={{ backgroundImage: "linear-gradient(to right, #D8B4FE, #9333EA)" }}
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to right, #D8B4FE, #9333EA)",
+                }}
               >
                 Passionate Web Developer & Tech Creator
               </h3>
@@ -146,16 +145,18 @@ export const About = () => {
                 ref={p1Ref}
                 className="reveal reveal-delay-1 text-foreground/70 leading-relaxed"
               >
-                With over 5 years of experience in web development, I specialize in creating
-                responsive, accessible, and performant web applications using modern technologies.
+                With over 5 years of experience in web development, I specialize
+                in creating responsive, accessible, and performant web
+                applications using modern technologies.
               </p>
               <p
                 ref={p2Ref}
                 className="reveal reveal-delay-2 text-foreground/70 leading-relaxed"
               >
-                I'm passionate about creating elegant solutions to complex problems, and I'm
-                constantly learning new technologies and techniques to stay at the forefront of
-                the ever-evolving web landscape.
+                I'm passionate about creating elegant solutions to complex
+                problems, and I'm constantly learning new technologies and
+                techniques to stay at the forefront of the ever-evolving web
+                landscape.
               </p>
 
               {/* CTA Buttons */}
@@ -202,8 +203,8 @@ export const About = () => {
                     `reveal reveal-right reveal-delay-${index + 2}`,
                     "rounded-xl p-6 border transition-all duration-300 cursor-pointer group",
                     "bg-card/50 backdrop-blur-md border-transparent hover:border-primary/50",
-                    "shadow-md shadow-purple-900/10",
-                    "hover:scale-[1.03] hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20"
+                    "shadow-md shadow-black/20",
+                    "hover:scale-[1.03] hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20",
                   )}
                 >
                   <div className="flex items-center space-x-4 mb-2">

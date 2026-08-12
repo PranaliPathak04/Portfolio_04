@@ -1,4 +1,3 @@
-
 import { Code, Server, Wrench, Palette } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useEffect, useRef, useState } from "react";
@@ -7,22 +6,46 @@ const skillsData = [
   {
     category: "Frontend Development",
     icon: Code,
-    skills: ["React.js", "Next.js", "JavaScript (ES6+)", "TypeScript", "HTML5 & CSS3"],
+    skills: [
+      "React.js",
+      "Next.js",
+      "JavaScript (ES6+)",
+      "TypeScript",
+      "HTML5 & CSS3",
+    ],
   },
   {
     category: "Styling & Design",
     icon: Palette,
-    skills: ["Tailwind CSS", "Bootstrap", "Sass/Less", "Figma (UI/UX)", "Responsive Design"],
+    skills: [
+      "Tailwind CSS",
+      "Bootstrap",
+      "Sass/Less",
+      "Figma (UI/UX)",
+      "Responsive Design",
+    ],
   },
   {
     category: "Backend & Database",
     icon: Server,
-    skills: ["Node.js (Basic)", "Express (Basic)", "MongoDB", "REST APIs", "Firebase"],
+    skills: [
+      "Node.js (Basic)",
+      "Express (Basic)",
+      "MongoDB",
+      "REST APIs",
+      "Firebase",
+    ],
   },
   {
     category: "Tools & Workflow",
     icon: Wrench,
-    skills: ["Git & GitHub", "VS Code", "NPM/Yarn", "Agile/Scrum", "Familiar with Docker"],
+    skills: [
+      "Git & GitHub",
+      "VS Code",
+      "NPM/Yarn",
+      "Agile/Scrum",
+      "Familiar with Docker",
+    ],
   },
 ];
 
@@ -39,7 +62,7 @@ function useScrollReveal(threshold = 0.15) {
           observer.unobserve(el);
         }
       },
-      { threshold, rootMargin: "0px 0px -60px 0px" }
+      { threshold, rootMargin: "0px 0px -60px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -63,7 +86,7 @@ function SkillCard({ data, index }) {
           observer.unobserve(el);
         }
       },
-      { threshold: 0.2, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.2, rootMargin: "0px 0px -40px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -75,12 +98,14 @@ function SkillCard({ data, index }) {
       className={cn(
         "rounded-xl p-6 border transition-all duration-500",
         "bg-card/50 backdrop-blur-sm",
-        "shadow-[0_0_20px_rgba(147,51,234,0.1)]",
-        "hover:scale-[1.03] hover:border-primary/50 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)]"
+        "shadow-[0_0_20px_hsl(var(--primary)/0.1)]",
+        "hover:scale-[1.03] hover:border-primary/50 hover:shadow-[0_0_30px_hsl(var(--primary)/0.2)]",
       )}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0) scale(1)" : "translateY(44px) scale(0.95)",
+        transform: visible
+          ? "translateY(0) scale(1)"
+          : "translateY(44px) scale(0.95)",
         transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s,
                      transform 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s`,
       }}
@@ -137,13 +162,18 @@ export const Skills = () => {
 
       <section id="skills" className="relative py-24 sm:py-32 overflow-hidden">
         <div className="container relative z-10">
-
           {/* Section Heading */}
           <div className="text-center mb-16">
-            <h2 ref={headingRef} className="reveal text-3xl sm:text-4xl font-bold">
+            <h2
+              ref={headingRef}
+              className="reveal text-3xl sm:text-4xl font-bold"
+            >
               My <span className="text-primary">Expertise</span>
             </h2>
-            <p ref={subRef} className="reveal reveal-delay-1 mt-4 text-foreground/70 max-w-2xl mx-auto">
+            <p
+              ref={subRef}
+              className="reveal reveal-delay-1 mt-4 text-foreground/70 max-w-2xl mx-auto"
+            >
               Technologies and tools I use to build modern web solutions.
             </p>
           </div>
@@ -157,7 +187,10 @@ export const Skills = () => {
 
           {/* CTA */}
           <div className="mt-16 text-center">
-            <p ref={ctaTextRef} className="reveal text-lg text-foreground/80 mb-6">
+            <p
+              ref={ctaTextRef}
+              className="reveal text-lg text-foreground/80 mb-6"
+            >
               Looking for something specific? Let's discuss your project.
             </p>
             <a
@@ -168,7 +201,6 @@ export const Skills = () => {
               Start a Conversation
             </a>
           </div>
-
         </div>
       </section>
     </>
