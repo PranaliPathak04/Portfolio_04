@@ -1,54 +1,54 @@
-import { Code, Server, Wrench, Palette } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useEffect, useRef, useState } from "react";
 
+import {
+  Code,
+  Server,
+  Database,
+  Sparkles,
+  Wrench,
+  GitBranch,
+  Palette,
+} from "lucide-react";
+
 const skillsData = [
   {
-    category: "Frontend Development",
+    category: "Languages & Frontend",
     icon: Code,
     skills: [
+      "Python",
+      "JavaScript",
+      "C",
+      "Java",
       "React.js",
       "Next.js",
-      "JavaScript (ES6+)",
-      "TypeScript",
-      "HTML5 & CSS3",
-    ],
-  },
-  {
-    category: "Styling & Design",
-    icon: Palette,
-    skills: [
       "Tailwind CSS",
-      "Bootstrap",
-      "Sass/Less",
-      "Figma (UI/UX)",
-      "Responsive Design",
     ],
   },
   {
-    category: "Backend & Database",
-    icon: Server,
+    category: "Backend & Databases",
+    icon: Database,
     skills: [
-      "Node.js (Basic)",
-      "Express (Basic)",
+      "Node.js",
+      "Express.js",
+      "FastAPI",
       "MongoDB",
-      "REST APIs",
+      "Supabase",
       "Firebase",
+      "MySQL",
     ],
   },
   {
-    category: "Tools & Workflow",
+    category: "AI / ML",
+    icon: Sparkles,
+    skills: ["spaCy", "OpenCV", "TF-IDF", "Tesseract OCR"],
+  },
+  {
+    category: "Tools & Problem Solving",
     icon: Wrench,
-    skills: [
-      "Git & GitHub",
-      "VS Code",
-      "NPM/Yarn",
-      "Agile/Scrum",
-      "Familiar with Docker",
-    ],
+    skills: ["Git", "Canva", "Data Structures & Algorithms"],
   },
 ];
-
 // Generic scroll reveal hook — adds class when element enters viewport
 function useScrollReveal(threshold = 0.15) {
   const ref = useRef(null);
