@@ -147,7 +147,7 @@ export const Hero = () => {
             {/* Name */}
             <h1
               ref={nameRef}
-              className="reveal reveal-delay-2 text-5xl sm:text-6xl md:text-7xl font-black leading-tight"
+              className="reveal reveal-delay-2 font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight"
             >
               <span className="text-glow">
                 <Typewriter
