@@ -1,4 +1,12 @@
-import { Github, Link2, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import {
+  Github,
+  Link2,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  X,
+  Expand,
+} from "lucide-react";
 import { cn } from "../lib/utils";
 import { useEffect, useRef, useState } from "react";
 
@@ -73,36 +81,38 @@ function useScrollReveal(threshold = 0.15) {
   return ref;
 }
 
-// ---------- Carousel ----------
-function ProjectCarousel({ images, videoUrl, title }) {
-  // Slides = images + optional video appended at the end
-  const slides = videoUrl
+// ---------- Gallery Modal ----------
+function GalleryModal({ project, startIndex, onClose }) {
+  const slides = project.videoUrl
     ? [
-        ...images.map((src) => ({ type: "image", src })),
-        { type: "video", src: videoUrl },
+        ...project.images.map((src) => ({ type: "image", src })),
+        { type: "video", src: project.videoUrl },
       ]
-    : images.map((src) => ({ type: "image", src }));
+    : project.images.map((src) => ({ type: "image", src }));
 
-  const [active, setActive] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
+  const [active, setActive] = useState(startIndex ?? 0);
   const touchStartX = useRef(null);
-
-  // Autoplay — pauses on hover, and pauses entirely while the video slide is active
-  useEffect(() => {
-    if (isHovering) return;
-    if (slides[active]?.type === "video") return;
-
-    const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % slides.length);
-    }, 3200);
-    return () => clearInterval(timer);
-  }, [isHovering, active, slides.length]);
 
   const goTo = (index) => {
     setActive(((index % slides.length) + slides.length) % slides.length);
   };
   const next = () => goTo(active + 1);
   const prev = () => goTo(active - 1);
+
+  // Lock body scroll + Esc to close + arrow keys to navigate
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [active]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
@@ -117,102 +127,105 @@ function ProjectCarousel({ images, videoUrl, title }) {
 
   return (
     <div
-      className="relative w-full h-60 overflow-hidden border-b border-primary/10 select-none"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8"
+      onClick={onClose}
     >
-      {/* Slides track */}
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-background/95 backdrop-blur-md" />
+
+      {/* Content */}
       <div
-        className="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ transform: `translateX(-${active * 100}%)` }}
+        className="relative z-10 w-full max-w-6xl"
+        onClick={(e) => e.stopPropagation()}
       >
-        {slides.map((slide, i) => (
-          <div
-            key={i}
-            className="w-full h-full flex-shrink-0 relative bg-black"
-          >
-            {slide.type === "image" ? (
-              <img
-                src={slide.src}
-                alt={`${title} screenshot ${i + 1}`}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <div className="relative w-full h-full">
-                <video
-                  src={slide.src}
-                  className="w-full h-full object-cover"
-                  controls
-                  playsInline
-                  poster={images[0]}
-                />
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-xs text-white px-2 py-1 rounded-full pointer-events-none">
-                  <Play className="h-3 w-3" fill="currentColor" />
-                  Demo
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Gradient for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
-
-      {/* Prev / Next arrows */}
-      <button
-        type="button"
-        onClick={prev}
-        aria-label="Previous screenshot"
-        className={cn(
-          "absolute left-2 top-1/2 -translate-y-1/2 z-10",
-          "flex items-center justify-center w-8 h-8 rounded-full",
-          "bg-black/40 backdrop-blur-sm text-white",
-          "opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-          "hover:bg-primary/80 hover:scale-110 active:scale-95",
-        )}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        onClick={next}
-        aria-label="Next screenshot"
-        className={cn(
-          "absolute right-2 top-1/2 -translate-y-1/2 z-10",
-          "flex items-center justify-center w-8 h-8 rounded-full",
-          "bg-black/40 backdrop-blur-sm text-white",
-          "opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-          "hover:bg-primary/80 hover:scale-110 active:scale-95",
-        )}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
-
-      {/* Slide counter */}
-      <div className="absolute top-2 right-2 z-10 text-[11px] font-medium text-white/90 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
-        {active + 1} / {slides.length}
-      </div>
-
-      {/* Dot navigation */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
-        {slides.map((_, i) => (
+        {/* Title + close */}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-white">{project.title}</h3>
           <button
-            key={i}
             type="button"
-            onClick={() => goTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            className={cn(
-              "h-1.5 rounded-full transition-all duration-300",
-              i === active
-                ? "w-5 bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
-                : "w-1.5 bg-white/40 hover:bg-white/70",
-            )}
-          />
-        ))}
+            onClick={onClose}
+            aria-label="Close gallery"
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Carousel */}
+        <div
+          className="relative w-full h-[68vh] sm:h-[70vh] rounded-xl overflow-hidden border border-white/10  bg-black select-none"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div
+            className="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{ transform: `translateX(-${active * 100}%)` }}
+          >
+            {slides.map((slide, i) => (
+              <div
+                key={i}
+                className="w-full h-full flex-shrink-0 flex items-center justify-center bg-black"
+              >
+                {slide.type === "image" ? (
+                  <img
+                    src={slide.src}
+                    alt={`${project.title} screenshot ${i + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <video
+                    src={slide.src}
+                    className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Arrows */}
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous"
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+
+          {/* Counter */}
+          <div className="absolute top-3 right-3 text-xs font-medium text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
+            {active + 1} / {slides.length}
+          </div>
+        </div>
+
+        {/* Dots */}
+        <div className="flex items-center justify-center gap-1.5 mt-4">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={cn(
+                "h-1.5 rounded-full transition-all duration-300",
+                i === active
+                  ? "w-6 bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
+                  : "w-1.5 bg-white/30 hover:bg-white/60",
+              )}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -222,6 +235,7 @@ function ProjectCarousel({ images, videoUrl, title }) {
 function ProjectCard({ project, index }) {
   const cardRef = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [modalStartIndex, setModalStartIndex] = useState(null);
   const cardDelay = index * 0.15;
 
   useEffect(() => {
@@ -240,103 +254,144 @@ function ProjectCard({ project, index }) {
     return () => observer.disconnect();
   }, []);
 
+  const openGallery = () => setModalStartIndex(0);
+  const openVideo = () => setModalStartIndex(project.images.length); // video is the last slide
+  const closeGallery = () => setModalStartIndex(null);
+
   return (
-    <div
-      ref={cardRef}
-      className={cn(
-        "rounded-xl border border-primary/20 flex flex-col h-full overflow-hidden group",
-        "bg-card/50 backdrop-blur-sm",
-        "shadow-lg shadow-black/20",
-        "transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        "hover:scale-[1.02] hover:shadow-[0_0_40px_hsl(var(--primary)/0.3)]",
-      )}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible
-          ? "translateY(0) scale(1)"
-          : "translateY(50px) scale(0.96)",
-        transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s,
-                     transform 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s`,
-      }}
-    >
-      {/* Carousel */}
-      <ProjectCarousel
-        images={project.images}
-        videoUrl={project.videoUrl}
-        title={project.title}
-      />
-
-      {/* Card Body */}
-      <div className="p-6 flex flex-col flex-grow">
-        <h3
-          className="text-2xl font-bold mb-3 text-white"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateX(0)" : "translateX(-20px)",
-            transition: `opacity 0.5s ease ${cardDelay + 0.28}s,
-                         transform 0.5s ease ${cardDelay + 0.28}s`,
-          }}
+    <>
+      <div
+        ref={cardRef}
+        className={cn(
+          "rounded-xl border border-primary/20 flex flex-col h-full overflow-hidden group",
+          "bg-card/50 backdrop-blur-sm",
+          "shadow-lg shadow-black/20",
+          "transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "hover:scale-[1.02] hover:shadow-[0_0_40px_hsl(var(--primary)/0.3)]",
+        )}
+        style={{
+          opacity: visible ? 1 : 0,
+          transform: visible
+            ? "translateY(0) scale(1)"
+            : "translateY(50px) scale(0.96)",
+          transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s,
+                       transform 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s`,
+        }}
+      >
+        {/* Static cover image with hover-to-expand */}
+        <button
+          type="button"
+          onClick={openGallery}
+          aria-label={`View ${project.title} screenshots`}
+          className="relative w-full h-60 overflow-hidden border-b border-primary/10 cursor-pointer"
         >
-          {project.title}
-        </h3>
+          <img
+            src={project.images[0]}
+            alt={`${project.title} cover screenshot`}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/50 transition-all duration-300">
+            <div className="flex items-center gap-2 text-white text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+              <Expand className="h-4 w-4" />
+              View Gallery
+            </div>
+          </div>
+          <div className="absolute top-2 right-2 text-[11px] font-medium text-white/90 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
+            {project.images.length} shots
+          </div>
+        </button>
 
-        <p
-          className="text-foreground/70 mb-4 flex-grow"
-          style={{
-            opacity: visible ? 1 : 0,
-            transition: `opacity 0.5s ease ${cardDelay + 0.36}s`,
-          }}
-        >
-          {project.description}
-        </p>
+        {/* Card Body */}
+        <div className="p-6 flex flex-col flex-grow">
+          <h3
+            className="text-2xl font-bold mb-3 text-white"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateX(0)" : "translateX(-20px)",
+              transition: `opacity 0.5s ease ${cardDelay + 0.28}s,
+                           transform 0.5s ease ${cardDelay + 0.28}s`,
+            }}
+          >
+            {project.title}
+          </h3>
 
-        <div className="flex flex-wrap gap-2 mb-6 mt-2">
-          {project.technologies.map((tech, i) => (
-            <span
-              key={i}
-              className="text-xs font-medium px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/50"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0)" : "translateY(8px)",
-                transition: `opacity 0.35s ease ${cardDelay + 0.4 + i * 0.06}s,
-                             transform 0.35s ease ${cardDelay + 0.4 + i * 0.06}s`,
-              }}
+          <p
+            className="text-foreground/70 mb-4 flex-grow"
+            style={{
+              opacity: visible ? 1 : 0,
+              transition: `opacity 0.5s ease ${cardDelay + 0.36}s`,
+            }}
+          >
+            {project.description}
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-6 mt-2">
+            {project.technologies.map((tech, i) => (
+              <span
+                key={i}
+                className="text-xs font-medium px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/50"
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? "translateY(0)" : "translateY(8px)",
+                  transition: `opacity 0.35s ease ${cardDelay + 0.4 + i * 0.06}s,
+                               transform 0.35s ease ${cardDelay + 0.4 + i * 0.06}s`,
+                }}
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+
+          <div
+            className="flex flex-wrap items-center gap-4 pt-4 border-t border-primary/10 mt-auto"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateY(0)" : "translateY(10px)",
+              transition: `opacity 0.4s ease ${cardDelay + 0.55}s,
+                           transform 0.4s ease ${cardDelay + 0.55}s`,
+            }}
+          >
+            <a
+              href={project.liveLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-sm text-primary hover:text-cyan-400 transition-colors duration-300"
             >
-              {tech}
-            </span>
-          ))}
-        </div>
-
-        <div
-          className="flex gap-4 pt-4 border-t border-primary/10 mt-auto"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(10px)",
-            transition: `opacity 0.4s ease ${cardDelay + 0.55}s,
-                         transform 0.4s ease ${cardDelay + 0.55}s`,
-          }}
-        >
-          <a
-            href={project.liveLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-sm text-primary hover:text-cyan-400 transition-colors duration-300"
-          >
-            <Link2 className="h-4 w-4" />
-            <span>Live Demo</span>
-          </a>
-          <a
-            href={project.githubLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-sm text-foreground/70 hover:text-white transition-colors duration-300"
-          >
-            <Github className="h-4 w-4" />
-            <span>Code</span>
-          </a>
+              <Link2 className="h-4 w-4" />
+              <span>Live Demo</span>
+            </a>
+            <a
+              href={project.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-sm text-foreground/70 hover:text-white transition-colors duration-300"
+            >
+              <Github className="h-4 w-4" />
+              <span>Code</span>
+            </a>
+            {project.videoUrl && (
+              <button
+                type="button"
+                onClick={openVideo}
+                className="flex items-center space-x-2 text-sm text-foreground/70 hover:text-white transition-colors duration-300"
+              >
+                <Play className="h-4 w-4" />
+                <span>Watch Demo</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {modalStartIndex !== null && (
+        <GalleryModal
+          project={project}
+          startIndex={modalStartIndex}
+          onClose={closeGallery}
+        />
+      )}
+    </>
   );
 }
 
