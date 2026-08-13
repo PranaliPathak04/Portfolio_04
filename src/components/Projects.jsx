@@ -1,34 +1,54 @@
-import { Github, Link2 } from "lucide-react";
+import { Github, Link2, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useEffect, useRef, useState } from "react";
 
 const projectsData = [
   {
-    title: "Project Nova",
+    title: "HopOn",
     description:
-      "A full-stack e-commerce platform built with Next.js and MongoDB. Features secure payment gateway integration and a detailed admin dashboard.",
-    technologies: ["Next.js", "React", "Tailwind CSS", "MongoDB"],
-    liveLink: "https://demo.projectnova.com",
-    githubLink: "https://github.com/pranali/project-nova",
-    imageUrl: "/assets/project-nova-screenshot.jpg",
+      "A route-based carpooling platform with geospatial route-matching, distance-proportional fare calculation, atomic seat booking, and driver/vehicle verification.",
+    technologies: [
+      "Next.js",
+      "MongoDB",
+      "NextAuth",
+      "Tailwind CSS",
+      "MapLibre",
+    ],
+    liveLink: "https://hop-on-ten.vercel.app/",
+    githubLink: "https://github.com/PranaliPathak04/HopOn",
+    images: [
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644557/1_Landing_Page-1.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644557/2_Landing_Page-2.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644558/3_Dashboard-My_bookings.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644560/4_Dashboard-My_Rides.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644561/5_Publish_Ride_Page.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644559/6_Find_a_Ride_Page.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644560/7_Profile-1.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644560/8_Profile-2.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786644561/9_Sign_up_Page.png",
+    ],
+    videoUrl:
+      "https://res.cloudinary.com/ywn9bf8r/video/upload/v1786645940/Rec_3.mp4",
   },
   {
-    title: "Portfolio v2.0",
+    title: "CogniHire",
     description:
-      "The current portfolio site, designed for speed and responsiveness with a unique cyberpunk aesthetic. Implements custom animations and utility classes.",
-    technologies: ["React", "Tailwind CSS", "Vite", "Custom Hooks"],
-    liveLink: "#hero",
-    githubLink: "https://github.com/pranali/portfolio-v2",
-    imageUrl: "/assets/portfolio-screenshot.jpg",
-  },
-  {
-    title: "TaskFlow Manager",
-    description:
-      "A simple, intuitive task management application. Uses Firebase for real-time data synchronization and user authentication.",
-    technologies: ["React", "Firebase", "Zustand", "Sass"],
-    liveLink: "https://demo.taskflow.app",
-    githubLink: "https://github.com/pranali/taskflow-manager",
-    imageUrl: "/assets/taskflow-manager-screenshot.jpg",
+      "An AI-based resume analyser with a hybrid ATS scorer using a custom spaCy NER model, sentence-transformer similarity, and AI-predicted job role matching.",
+    technologies: ["React", "FastAPI", "spaCy", "Groq", "Firebase"],
+    liveLink: "In development",
+    githubLink: "https://github.com/PranaliPathak04/CogniHire",
+    images: [
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643801/1-upload-page.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643802/2-dashboard.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643801/3-skills.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643802/4-rewrites.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643803/5-interview.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643803/6-jobs.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643803/7-job-description_modal.png",
+      "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786643803/8-history.png",
+    ],
+    videoUrl:
+      "https://res.cloudinary.com/ywn9bf8r/video/upload/v1786643892/Cognihire_-_Recording.mp4",
   },
 ];
 
@@ -53,7 +73,152 @@ function useScrollReveal(threshold = 0.15) {
   return ref;
 }
 
-// Project card with its own visibility state for inner staggering
+// ---------- Carousel ----------
+function ProjectCarousel({ images, videoUrl, title }) {
+  // Slides = images + optional video appended at the end
+  const slides = videoUrl
+    ? [
+        ...images.map((src) => ({ type: "image", src })),
+        { type: "video", src: videoUrl },
+      ]
+    : images.map((src) => ({ type: "image", src }));
+
+  const [active, setActive] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const touchStartX = useRef(null);
+
+  // Autoplay — pauses on hover, and pauses entirely while the video slide is active
+  useEffect(() => {
+    if (isHovering) return;
+    if (slides[active]?.type === "video") return;
+
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % slides.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, [isHovering, active, slides.length]);
+
+  const goTo = (index) => {
+    setActive(((index % slides.length) + slides.length) % slides.length);
+  };
+  const next = () => goTo(active + 1);
+  const prev = () => goTo(active - 1);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (delta > 40) prev();
+    else if (delta < -40) next();
+    touchStartX.current = null;
+  };
+
+  return (
+    <div
+      className="relative w-full h-60 overflow-hidden border-b border-primary/10 select-none"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Slides track */}
+      <div
+        className="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ transform: `translateX(-${active * 100}%)` }}
+      >
+        {slides.map((slide, i) => (
+          <div
+            key={i}
+            className="w-full h-full flex-shrink-0 relative bg-black"
+          >
+            {slide.type === "image" ? (
+              <img
+                src={slide.src}
+                alt={`${title} screenshot ${i + 1}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="relative w-full h-full">
+                <video
+                  src={slide.src}
+                  className="w-full h-full object-cover"
+                  controls
+                  playsInline
+                  poster={images[0]}
+                />
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-xs text-white px-2 py-1 rounded-full pointer-events-none">
+                  <Play className="h-3 w-3" fill="currentColor" />
+                  Demo
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Gradient for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+
+      {/* Prev / Next arrows */}
+      <button
+        type="button"
+        onClick={prev}
+        aria-label="Previous screenshot"
+        className={cn(
+          "absolute left-2 top-1/2 -translate-y-1/2 z-10",
+          "flex items-center justify-center w-8 h-8 rounded-full",
+          "bg-black/40 backdrop-blur-sm text-white",
+          "opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+          "hover:bg-primary/80 hover:scale-110 active:scale-95",
+        )}
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={next}
+        aria-label="Next screenshot"
+        className={cn(
+          "absolute right-2 top-1/2 -translate-y-1/2 z-10",
+          "flex items-center justify-center w-8 h-8 rounded-full",
+          "bg-black/40 backdrop-blur-sm text-white",
+          "opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+          "hover:bg-primary/80 hover:scale-110 active:scale-95",
+        )}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+
+      {/* Slide counter */}
+      <div className="absolute top-2 right-2 z-10 text-[11px] font-medium text-white/90 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
+        {active + 1} / {slides.length}
+      </div>
+
+      {/* Dot navigation */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className={cn(
+              "h-1.5 rounded-full transition-all duration-300",
+              i === active
+                ? "w-5 bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
+                : "w-1.5 bg-white/40 hover:bg-white/70",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------- Project Card ----------
 function ProjectCard({ project, index }) {
   const cardRef = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -79,9 +244,10 @@ function ProjectCard({ project, index }) {
     <div
       ref={cardRef}
       className={cn(
-        "rounded-xl border border-primary/20 transition-all duration-500 flex flex-col h-full overflow-hidden group",
+        "rounded-xl border border-primary/20 flex flex-col h-full overflow-hidden group",
         "bg-card/50 backdrop-blur-sm",
         "shadow-lg shadow-black/20",
+        "transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "hover:scale-[1.02] hover:shadow-[0_0_40px_hsl(var(--primary)/0.3)]",
       )}
       style={{
@@ -93,25 +259,15 @@ function ProjectCard({ project, index }) {
                      transform 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s`,
       }}
     >
-      {/* Image — slides down into view */}
-      <div className="relative w-full h-60 overflow-hidden border-b border-primary/10">
-        <img
-          src={project.imageUrl}
-          alt={`Screenshot of ${project.title}`}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(-16px)",
-            transition: `opacity 0.7s ease ${cardDelay + 0.2}s,
-                         transform 0.7s ease ${cardDelay + 0.2}s`,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-      </div>
+      {/* Carousel */}
+      <ProjectCarousel
+        images={project.images}
+        videoUrl={project.videoUrl}
+        title={project.title}
+      />
 
       {/* Card Body */}
       <div className="p-6 flex flex-col flex-grow">
-        {/* Title */}
         <h3
           className="text-2xl font-bold mb-3 text-white"
           style={{
@@ -124,7 +280,6 @@ function ProjectCard({ project, index }) {
           {project.title}
         </h3>
 
-        {/* Description */}
         <p
           className="text-foreground/70 mb-4 flex-grow"
           style={{
@@ -135,7 +290,6 @@ function ProjectCard({ project, index }) {
           {project.description}
         </p>
 
-        {/* Tech Tags — stagger each tag */}
         <div className="flex flex-wrap gap-2 mb-6 mt-2">
           {project.technologies.map((tech, i) => (
             <span
@@ -153,7 +307,6 @@ function ProjectCard({ project, index }) {
           ))}
         </div>
 
-        {/* Links */}
         <div
           className="flex gap-4 pt-4 border-t border-primary/10 mt-auto"
           style={{
@@ -248,7 +401,7 @@ export const Projects = () => {
             </p>
             <a
               ref={ctaBtnRef}
-              href="YOUR_GITHUB_PROFILE_URL"
+              href="https://github.com/PranaliPathak04"
               target="_blank"
               rel="noopener noreferrer"
               className="reveal reveal-delay-1 cosmic-button inline-block"
