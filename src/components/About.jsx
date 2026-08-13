@@ -1,6 +1,6 @@
 import { cn } from "../lib/utils";
 import { Code, Sparkles, Brain } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const CV_FILE_PATH = "public\\Pranali Pathak resume 12-08.pdf";
 
@@ -51,6 +51,66 @@ function useScrollReveal(options = {}) {
   return ref;
 }
 
+// Individual skill card — handles its own reveal-in animation, then hands
+// control over to plain Tailwind hover classes so hover transitions stay smooth.
+function AboutSkillCard({ item, index }) {
+  const cardRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [entered, setEntered] = useState(false); // true once entrance transition finishes
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={cardRef}
+      onTransitionEnd={(e) => {
+        if (
+          visible &&
+          (e.propertyName === "transform" || e.propertyName === "opacity")
+        ) {
+          setEntered(true);
+        }
+      }}
+      className={cn(
+        // entrance-only classes — dropped once "entered" so they stop fighting hover
+        !entered && `reveal reveal-right reveal-delay-${index + 2}`,
+        visible && !entered && "reveal-visible",
+        "rounded-xl p-6 border cursor-pointer group",
+        "bg-card/50 backdrop-blur-md border-transparent",
+        "shadow-md shadow-black/20",
+        "transition-[transform,box-shadow,border-color] duration-300 ease-out",
+        "hover:scale-[1.02]",
+        "hover:border-primary/50",
+        "hover:shadow-lg hover:shadow-primary/20",
+        "will-change-transform",
+      )}
+      style={entered ? { opacity: 1, transform: "none" } : undefined}
+    >
+      <div className="flex items-center space-x-4 mb-2">
+        <item.icon className="h-6 w-6 text-primary group-hover:text-cyan-400 transition-colors duration-300" />
+        <h3 className="text-xl font-semibold text-white group-hover:text-primary transition-colors duration-300">
+          {item.title}
+        </h3>
+      </div>
+      <p className="mt-2 text-sm text-foreground/80">{item.desc}</p>
+    </div>
+  );
+}
+
 export const About = () => {
   const headingRef = useScrollReveal();
   const leftColRef = useScrollReveal();
@@ -58,9 +118,6 @@ export const About = () => {
   const p1Ref = useScrollReveal();
   const p2Ref = useScrollReveal();
   const ctaRef = useScrollReveal();
-
-  // Individual refs for each skill card
-  const cardRefs = [useScrollReveal(), useScrollReveal(), useScrollReveal()];
 
   return (
     <>
@@ -201,29 +258,7 @@ export const About = () => {
             {/* RIGHT COLUMN: Skill Cards */}
             <div className="flex flex-col space-y-6">
               {skillsContent.map((item, index) => (
-                <div
-                  key={index}
-                  ref={cardRefs[index]}
-                  className={cn(
-                    `reveal reveal-right reveal-delay-${index + 2}`,
-                    "rounded-xl p-6 border cursor-pointer group",
-                    "bg-card/50 backdrop-blur-md border-transparent",
-                    "shadow-md shadow-black/20",
-                    "transition-[transform,box-shadow,border-color] duration-300 ease-out",
-                    "hover:scale-[1.02]",
-                    "hover:border-primary/50",
-                    "hover:shadow-lg hover:shadow-primary/20",
-                    "will-change-transform",
-                  )}
-                >
-                  <div className="flex items-center space-x-4 mb-2">
-                    <item.icon className="h-6 w-6 text-primary group-hover:text-cyan-400 transition-colors duration-300" />
-                    <h3 className="text-xl font-semibold text-white group-hover:text-primary transition-colors duration-300">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <p className="mt-2 text-sm text-foreground/80">{item.desc}</p>
-                </div>
+                <AboutSkillCard key={index} item={item} index={index} />
               ))}
             </div>
           </div>

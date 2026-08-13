@@ -74,6 +74,7 @@ function useScrollReveal(threshold = 0.15) {
 function SkillCard({ data, index }) {
   const cardRef = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [entered, setEntered] = useState(false);
   const cardDelay = index * 0.13;
 
   useEffect(() => {
@@ -95,20 +96,33 @@ function SkillCard({ data, index }) {
   return (
     <div
       ref={cardRef}
+      onTransitionEnd={(e) => {
+        if (
+          visible &&
+          (e.propertyName === "transform" || e.propertyName === "opacity")
+        ) {
+          setEntered(true);
+        }
+      }}
       className={cn(
-        "rounded-xl p-6 border transition-all duration-500",
+        "rounded-xl p-6 border ",
         "bg-card/50 backdrop-blur-sm",
         "shadow-[0_0_20px_hsl(var(--primary)/0.1)]",
         "hover:scale-[1.03] hover:border-primary/50 hover:shadow-[0_0_30px_hsl(var(--primary)/0.2)]",
+        entered ? "transition-all duartion-300" : "transition-none",
       )}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible
-          ? "translateY(0) scale(1)"
-          : "translateY(44px) scale(0.95)",
-        transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s,
+      style={
+        entered
+          ? undefined
+          : {
+              opacity: visible ? 1 : 0,
+              transform: visible
+                ? "translateY(0) scale(1)"
+                : "translateY(44px) scale(0.95)",
+              transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s,
                      transform 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s`,
-      }}
+            }
+      }
     >
       {/* Card Header */}
       <div className="flex items-center space-x-3 mb-4 border-b border-primary/20 pb-3">
