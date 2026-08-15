@@ -127,7 +127,7 @@ function GalleryModal({ project, startIndex, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-8"
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -135,17 +135,19 @@ function GalleryModal({ project, startIndex, onClose }) {
 
       {/* Content */}
       <div
-        className="relative z-10 w-full max-w-6xl"
+        className="relative z-10 w-full max-w-6xl h-[92dvh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Title + close */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-white">{project.title}</h3>
+        <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
+          <h3 className="text-lg sm:text-xl font-bold text-white truncate pr-3">
+            {project.title}
+          </h3>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close gallery"
-            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300 shrink-0"
           >
             <X className="h-5 w-5" />
           </button>
@@ -153,7 +155,7 @@ function GalleryModal({ project, startIndex, onClose }) {
 
         {/* Carousel */}
         <div
-          className="relative w-full h-[68vh] sm:h-[70vh] rounded-xl overflow-hidden border border-white/10  bg-black select-none"
+          className="relative w-full flex-1 min-h-0 rounded-xl overflow-hidden border border-white/10 bg-black select-none"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -210,7 +212,7 @@ function GalleryModal({ project, startIndex, onClose }) {
         </div>
 
         {/* Dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-4">
+        <div className="flex items-center justify-center gap-1.5 mt-3 sm:mt-4 shrink-0">
           {slides.map((_, i) => (
             <button
               key={i}
