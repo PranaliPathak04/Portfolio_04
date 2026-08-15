@@ -105,11 +105,11 @@ function SkillCard({ data, index }) {
         }
       }}
       className={cn(
-        "rounded-xl p-6 border ",
-        "bg-card/50 backdrop-blur-sm",
-        "shadow-[0_0_20px_hsl(var(--primary)/0.1)]",
-        "hover:scale-[1.03] hover:border-primary/50 hover:shadow-[0_0_30px_hsl(var(--primary)/0.2)]",
-        entered ? "transition-all duartion-300" : "transition-none",
+        "rounded-xl p-6 border border-primary/25",
+        "bg-card/90 backdrop-blur-sm",
+        "shadow-lg shadow-black/30",
+        "hover:scale-[1.03] hover:border-primary/60 hover:shadow-[0_0_30px_hsl(var(--primary)/0.2)]",
+        entered ? "transition-all duration-300" : "transition-none",
       )}
       style={
         entered
@@ -210,7 +210,7 @@ export const Skills = () => {
             <a
               ref={ctaBtnRef}
               href="#contact"
-              className="reveal reveal-delay-1 cosmic-button inline-block"
+              className="reveal reveal-delay-5  cosmic-button shadow-lg inline-block"
             >
               Start a Conversation
             </a>

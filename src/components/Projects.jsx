@@ -483,7 +483,7 @@ export const Projects = () => {
               href="https://github.com/PranaliPathak04"
               target="_blank"
               rel="noopener noreferrer"
-              className="reveal reveal-delay-1 cosmic-button inline-block"
+              className="reveal reveal-delay-1 cosmic-button shadow-lg inline-block"
             >
               Visit My GitHub
             </a>

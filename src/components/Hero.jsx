@@ -126,7 +126,9 @@ export const Hero = () => {
               {/* Inner Image Container */}
               <div className="glow-pulse relative w-full h-full rounded-full overflow-hidden transition-transform duration-300 hover:scale-[1.03]">
                 <img
-                  src={prapa}
+                  src={
+                    "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786823427/Maroon_prapa_closeup.jpg"
+                  }
                   alt="Pranali Pathak Profile"
                   className="w-full h-full object-cover"
                 />
@@ -167,7 +169,7 @@ export const Hero = () => {
               ref={titleRef}
               className="reveal reveal-delay-3 text-xl sm:text-2xl text-foreground/80"
             >
-              Frontend Developer • UI/UX Enthusiast
+              Full Stack Developer • Problem Solver • AIML Enthusiast
             </h2>
 
             {/* Description */}
@@ -175,8 +177,9 @@ export const Hero = () => {
               ref={descRef}
               className="reveal reveal-delay-4 max-w-xl text-foreground/70 pt-2 mx-auto md:mx-0 md:ml-auto"
             >
-              I build responsive, modern, and visually engaging web experiences
-              using React, CSS, and animations that feel smooth and alive.
+              Curiosity is what gets me started; understanding is what keeps me
+              going. I build with the belief that a great product should not
+              only work well, but feel effortless to use.
             </p>
 
             {/* CTA Buttons */}
