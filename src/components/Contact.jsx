@@ -150,7 +150,7 @@ export const Contact = () => {
                   <div
                     key={index}
                     ref={contactCardRefs[index]}
-                    className={`reveal-left reveal-delay-${index + 1} flex items-start space-x-4 p-4 rounded-xl border border-primary/25 bg-card/80 backdrop-blur-sm shadow-lg shadow-black/20 transition-all duration-300 hover:border-primary/60 group`}
+                    className={`reveal-left reveal-delay-${index + 1} flex items-start space-x-4 p-4 rounded-xl border border-white/40 bg-card/95 backdrop-blur-sm shadow-lg shadow-black/30 transition-all duration-300 hover:border-primary/70 group`}
                   >
                     <item.icon className="h-6 w-6 text-primary flex-shrink-0 mt-1 group-hover:text-cyan-400 transition-colors duration-300" />
                     <div>
@@ -172,7 +172,7 @@ export const Contact = () => {
               </div>
 
               {/* Socials */}
-              <div className="pt-8 border-t border-primary/10">
+              <div className="pt-8 border-t border-white/10">
                 <h3
                   ref={socialsTitleRef}
                   className="reveal reveal-delay-1 text-xl font-semibold mb-4 text-white"
@@ -189,7 +189,7 @@ export const Contact = () => {
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3 rounded-full border border-primary/30 bg-card/80 backdrop-blur-sm shadow-md shadow-black/20 transition-all duration-300 hover:border-primary/70 hover:scale-110 group"
+                      className="p-3 rounded-full border border-white/40 bg-card/95 backdrop-blur-sm shadow-md shadow-black/30 transition-all duration-300 hover:border-primary/80 hover:scale-110 group"
                       aria-label={item.label}
                     >
                       <item.icon className="h-5 w-5 text-primary group-hover:text-cyan-400 transition-colors duration-300" />
@@ -207,7 +207,7 @@ export const Contact = () => {
               <form
                 action="#"
                 method="POST"
-                className="space-y-6 p-8 rounded-xl bg-card/80 backdrop-blur-sm border border-primary/25 shadow-xl shadow-black/20 h-full"
+                className="space-y-6 p-8 rounded-xl bg-card/95 backdrop-blur-sm border border-white/40 shadow-xl shadow-black/30 h-full"
               >
                 <h3 className="text-2xl font-semibold mb-4 text-white">
                   Send a Message
