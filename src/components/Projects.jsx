@@ -369,7 +369,7 @@ function ProjectCard({ project, index }) {
         </div>
 
         {/* Links bar */}
-        <div className="flex items-center justify-center gap-5 sm:gap-6 h-12 sm:h-14 mt-4 lg:mt-0 bg-background text-primary lg:group-hover:bg-black/80 lg:group-hover:text-white/80 transition-colors duration-300">
+        <div className="flex items-center border-t border-white/20 justify-center gap-5 sm:gap-6 h-12 sm:h-14 mt-4 lg:mt-0 bg-background text-cyan-400 lg:group-hover:bg-black/80 lg:group-hover:text-white/80 transition-colors duration-300">
           {isLiveLinkReal ? (
             <a
               href={project.liveLink}
