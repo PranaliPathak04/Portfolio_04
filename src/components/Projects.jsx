@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const projectsData = [
   {
@@ -82,6 +83,11 @@ function useScrollReveal(threshold = 0.15) {
 }
 
 // ---------- Gallery Modal ----------
+// Rendered through a portal straight into <body>. position: fixed only tracks
+// the real viewport if no ancestor has a transform/filter/perspective set —
+// the card below sets an inline transform for its scroll-reveal animation,
+// which is enough to trap a non-portaled modal inside the card's box on some
+// browsers. Portaling sidesteps that entirely.
 function GalleryModal({ project, startIndex, onClose }) {
   const slides = project.videoUrl
     ? [
@@ -99,17 +105,26 @@ function GalleryModal({ project, startIndex, onClose }) {
   const next = () => goTo(active + 1);
   const prev = () => goTo(active - 1);
 
-  // Lock body scroll + Esc to close + arrow keys to navigate
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+
     const handleKey = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
     };
     window.addEventListener("keydown", handleKey);
+
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", handleKey);
     };
   }, [active]);
@@ -125,9 +140,10 @@ function GalleryModal({ project, startIndex, onClose }) {
     touchStartX.current = null;
   };
 
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-8"
+      className="fixed inset-0 z-[100] flex flex-col sm:items-center sm:justify-center sm:p-8"
+      style={{ height: "100dvh" }}
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -135,7 +151,8 @@ function GalleryModal({ project, startIndex, onClose }) {
 
       {/* Content */}
       <div
-        className="relative z-10 w-full max-w-6xl h-[92dvh] flex flex-col"
+        className="relative z-10 w-full h-full sm:h-[92dvh] sm:max-w-6xl flex flex-col p-3 sm:p-0"
+        style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Title + close */}
@@ -173,6 +190,7 @@ function GalleryModal({ project, startIndex, onClose }) {
                     src={slide.src}
                     alt={`${project.title} screenshot ${i + 1}`}
                     className="w-full h-full object-contain"
+                    loading={Math.abs(i - active) <= 1 ? "eager" : "lazy"}
                   />
                 ) : (
                   <video
@@ -192,7 +210,7 @@ function GalleryModal({ project, startIndex, onClose }) {
             type="button"
             onClick={prev}
             aria-label="Previous"
-            className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
+            className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -200,7 +218,7 @@ function GalleryModal({ project, startIndex, onClose }) {
             type="button"
             onClick={next}
             aria-label="Next"
-            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
+            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all duration-300"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -212,7 +230,10 @@ function GalleryModal({ project, startIndex, onClose }) {
         </div>
 
         {/* Dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-3 sm:mt-4 shrink-0">
+        <div
+          className="flex items-center justify-center gap-1.5 mt-3 sm:mt-4 shrink-0 overflow-x-auto py-1"
+          style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }}
+        >
           {slides.map((_, i) => (
             <button
               key={i}
@@ -220,7 +241,7 @@ function GalleryModal({ project, startIndex, onClose }) {
               onClick={() => goTo(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={cn(
-                "h-1.5 rounded-full transition-all duration-300",
+                "h-1.5 rounded-full transition-all duration-300 shrink-0",
                 i === active
                   ? "w-6 bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
                   : "w-1.5 bg-white/30 hover:bg-white/60",
@@ -231,9 +252,16 @@ function GalleryModal({ project, startIndex, onClose }) {
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }
 
 // ---------- Project Card ----------
+// Full-bleed screenshot as the card itself. Title + shot count sit on the
+// image always; the description and tech tags only surface as an overlay on
+// hover (lg+ / any hover-capable pointer). No hover on touch, so a compact
+// text fallback renders below the image on small screens instead of being
+// permanently hidden.
 function ProjectCard({ project, index }) {
   const cardRef = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -259,130 +287,124 @@ function ProjectCard({ project, index }) {
   const openGallery = () => setModalStartIndex(0);
   const openVideo = () => setModalStartIndex(project.images.length); // video is the last slide
   const closeGallery = () => setModalStartIndex(null);
+  const isLiveLinkReal = project.liveLink?.startsWith("http");
 
   return (
     <>
       <div
         ref={cardRef}
         className={cn(
-          "rounded-xl border border-primary/20 flex flex-col h-full overflow-hidden group",
+          "rounded-xl border-2 border-white/20 flex flex-col overflow-hidden group",
           "bg-card/50 backdrop-blur-sm",
           "shadow-lg shadow-black/20",
-          "transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          "hover:scale-[1.02] hover:shadow-[0_0_40px_hsl(var(--primary)/0.3)]",
+          "transition-shadow duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "hover:shadow-[0_0_40px_hsl(var(--primary)/0.3)]",
         )}
         style={{
           opacity: visible ? 1 : 0,
           transform: visible
-            ? "translateY(0) scale(1)"
+            ? undefined // an inline transform here (even translateY(0)) creates a containing block that breaks the portaled modal's fixed positioning
             : "translateY(50px) scale(0.96)",
           transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s,
                        transform 0.65s cubic-bezier(0.22,1,0.36,1) ${cardDelay}s`,
         }}
       >
-        {/* Static cover image with hover-to-expand */}
+        {/* Full-bleed screenshot */}
         <button
           type="button"
           onClick={openGallery}
           aria-label={`View ${project.title} screenshots`}
-          className="relative w-full h-60 overflow-hidden border-b border-primary/10 cursor-pointer"
+          className="relative w-full aspect-[3/2] overflow-hidden cursor-pointer"
         >
           <img
             src={project.images[0]}
             alt={`${project.title} cover screenshot`}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/50 transition-all duration-300">
-            <div className="flex items-center gap-2 text-white text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-              <Expand className="h-4 w-4" />
-              View Gallery
-            </div>
-          </div>
-          <div className="absolute top-2 right-2 text-[11px] font-medium text-white/90 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
+          {/* base gradient so the title stays legible on bright screenshots */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/0 to-black/20" />
+
+          <h3 className="absolute top-3 left-4 text-lg sm:text-xl font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]">
+            {project.title}
+          </h3>
+          <div className="absolute top-3 right-3 text-[11px] font-medium text-white/90 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
             {project.images.length} shots
+          </div>
+
+          {/* Hover-only overlay: description + tags, image dims underneath */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-sm">
+              {project.description}
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {project.technologies.map((tech, i) => (
+                <span
+                  key={i}
+                  className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/50"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+            <span className="flex items-center gap-1.5 text-xs text-white/60 mt-1">
+              <Expand className="h-3.5 w-3.5" />
+              Tap to view gallery
+            </span>
           </div>
         </button>
 
-        {/* Card Body */}
-        <div className="p-6 flex flex-col flex-grow">
-          <h3
-            className="text-2xl font-bold mb-3 text-white"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateX(0)" : "translateX(-20px)",
-              transition: `opacity 0.5s ease ${cardDelay + 0.28}s,
-                           transform 0.5s ease ${cardDelay + 0.28}s`,
-            }}
-          >
-            {project.title}
-          </h3>
-
-          <p
-            className="text-foreground/70 mb-4 flex-grow"
-            style={{
-              opacity: visible ? 1 : 0,
-              transition: `opacity 0.5s ease ${cardDelay + 0.36}s`,
-            }}
-          >
-            {project.description}
-          </p>
-
-          <div className="flex flex-wrap gap-2 mb-6 mt-2">
+        {/* Mobile/tablet fallback — no hover exists, so show it inline instead */}
+        <div className="lg:hidden px-4 pt-4">
+          <p className="text-sm text-foreground/70">{project.description}</p>
+          <div className="flex flex-wrap gap-2 mt-3">
             {project.technologies.map((tech, i) => (
               <span
                 key={i}
-                className="text-xs font-medium px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/50"
-                style={{
-                  opacity: visible ? 1 : 0,
-                  transform: visible ? "translateY(0)" : "translateY(8px)",
-                  transition: `opacity 0.35s ease ${cardDelay + 0.4 + i * 0.06}s,
-                               transform 0.35s ease ${cardDelay + 0.4 + i * 0.06}s`,
-                }}
+                className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/50"
               >
                 {tech}
               </span>
             ))}
           </div>
+        </div>
 
-          <div
-            className="flex flex-wrap items-center gap-4 pt-4 border-t border-primary/10 mt-auto"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(10px)",
-              transition: `opacity 0.4s ease ${cardDelay + 0.55}s,
-                           transform 0.4s ease ${cardDelay + 0.55}s`,
-            }}
-          >
+        {/* Links bar */}
+        <div className="flex items-center justify-center gap-5 sm:gap-6 h-12 sm:h-14 mt-4 lg:mt-0 bg-background text-primary lg:group-hover:bg-black/80 lg:group-hover:text-white/80 transition-colors duration-300">
+          {isLiveLinkReal ? (
             <a
               href={project.liveLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-2 text-sm text-primary hover:text-cyan-400 transition-colors duration-300"
+              className="flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity duration-200"
             >
               <Link2 className="h-4 w-4" />
               <span>Live Demo</span>
             </a>
-            <a
-              href={project.githubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 text-sm text-foreground/70 hover:text-white transition-colors duration-300"
+          ) : (
+            <span className="flex items-center gap-1.5 text-sm font-medium opacity-50 cursor-not-allowed">
+              <Link2 className="h-4 w-4" />
+              <span>In development</span>
+            </span>
+          )}
+          <a
+            href={project.githubLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity duration-200"
+          >
+            <Github className="h-4 w-4" />
+            <span>Code</span>
+          </a>
+          {project.videoUrl && (
+            <button
+              type="button"
+              onClick={openVideo}
+              className="flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity duration-200"
             >
-              <Github className="h-4 w-4" />
-              <span>Code</span>
-            </a>
-            {project.videoUrl && (
-              <button
-                type="button"
-                onClick={openVideo}
-                className="flex items-center space-x-2 text-sm text-foreground/70 hover:text-white transition-colors duration-300"
-              >
-                <Play className="h-4 w-4" />
-                <span>Watch Demo</span>
-              </button>
-            )}
-          </div>
+              <Play className="h-4 w-4" />
+              <span>Watch Demo</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -442,7 +464,7 @@ export const Projects = () => {
           </div>
 
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {projectsData.map((project, index) => (
               <ProjectCard key={index} project={project} index={index} />
             ))}
