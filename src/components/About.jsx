@@ -2,7 +2,7 @@ import { cn } from "../lib/utils";
 import { Code, Sparkles, Brain } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const CV_FILE_PATH = "public\\Pranali Pathak resume 12-08.pdf";
+const CV_FILE_PATH = "/Pranali_Pathak-resume.pdf";
 
 const skillsContent = [
   {
@@ -241,7 +241,7 @@ export const About = () => {
 
                 <a
                   href={CV_FILE_PATH}
-                  download="Pranali_Pathak_CV"
+                  download="Pranali_Pathak_CV.pdf"
                   className="px-8 py-3 rounded-full font-medium transition-all duration-300 hover:bg-primary/10 hover:scale-110"
                   style={{
                     backgroundColor: "transparent",

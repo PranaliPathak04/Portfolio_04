@@ -9,7 +9,7 @@ const socialLinks = [
     label: "LinkedIn",
     link: "https://www.linkedin.com/in/pranali-pathak-83906634b",
   },
-  { icon: Github, label: "GitHub", link: "YOUR_GITHUB_URL" },
+  { icon: Github, label: "GitHub", link: "https://github.com/PranaliPathak04" },
   { icon: Mail, label: "Email", link: "mailto:pranalipathak04@gmail.com" },
 ];
 
