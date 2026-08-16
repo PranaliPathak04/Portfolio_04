@@ -101,8 +101,8 @@ export const Hero = () => {
 
         /* Glow pulse on image */
         @keyframes glow-pulse {
-          0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.35); }
-          50% { box-shadow: 0 0 32px rgba(139, 92, 246, 0.5), 0 0 120px rgba(139, 92, 246, 0.4); }
+          0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.25); }
+          50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.35), 0 0 120px rgba(139, 92, 246, 0.4); }
         }
         .glow-pulse {
           animation: glow-pulse 3s ease-in-out infinite;
@@ -127,7 +127,7 @@ export const Hero = () => {
               <div className="glow-pulse relative w-full h-full rounded-full overflow-hidden transition-transform duration-300 hover:scale-[1.03]">
                 <img
                   src={
-                    "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786823427/Maroon_prapa_closeup.jpg"
+                    "https://res.cloudinary.com/ywn9bf8r/image/upload/v1786823181/pinky_prapa.jpg"
                   }
                   alt="Pranali Pathak Profile"
                   className="w-full h-full object-cover"
