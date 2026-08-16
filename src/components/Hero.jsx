@@ -101,8 +101,8 @@ export const Hero = () => {
 
         /* Glow pulse on image */
         @keyframes glow-pulse {
-          0%, 100% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.7); }
-          50% { box-shadow: 0 0 70px rgba(139, 92, 246, 1), 0 0 120px rgba(139, 92, 246, 0.4); }
+          0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.35); }
+          50% { box-shadow: 0 0 32px rgba(139, 92, 246, 0.5), 0 0 120px rgba(139, 92, 246, 0.4); }
         }
         .glow-pulse {
           animation: glow-pulse 3s ease-in-out infinite;
