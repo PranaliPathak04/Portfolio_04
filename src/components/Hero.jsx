@@ -151,7 +151,7 @@ export const Hero = () => {
               ref={nameRef}
               className="reveal reveal-delay-2 font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight"
             >
-              <span className="text-glow">
+              <span className="">
                 <Typewriter
                   words={["Pranali Pathak"]}
                   loop={true}
