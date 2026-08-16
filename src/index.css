@@ -70,19 +70,6 @@
 
 @layer base {
   :root {
-    /* LIGHT MODE — pale gray-blue bg, navy text, pink accent */
-    --background: 200 15% 94%;
-    --foreground: 206 20% 15%;
-
-    --card: 200 15% 98%;
-
-    --primary: 336 100% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --border: 205 15% 75%;
-  }
-
-  .dark {
     /* DARK MODE — deep navy bg, hot pink accent */
     --background: 200 10% 4%; /* was: 206 18% 12% */
     --foreground: 200 15% 92%;
